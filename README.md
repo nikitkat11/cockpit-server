@@ -1,5 +1,7 @@
 # cockpit
 
+[![CI](https://github.com/nikitkat11/cockpit-server/actions/workflows/ci.yml/badge.svg)](https://github.com/nikitkat11/cockpit-server/actions/workflows/ci.yml)
+
 A single-file local control center for a folder of markdown notes.
 
 It reads an Obsidian-style vault — frontmatter, headings, checklists, wikilinks —
@@ -73,3 +75,21 @@ independent.
   notes, wrong at a few thousand.
 
 MIT licensed.
+
+## Tests
+
+```bash
+python3 -m unittest discover tests -v
+cd e2e && npm ci && npx playwright install chromium && npx playwright test
+```
+
+56 Python tests, stdlib only, covering the markdown parsers and the HTTP layer —
+including `/api/answer`, the one endpoint that writes to disk. 7 Playwright tests
+drive a real browser against a real server reading `e2e/fixture-vault/`, so the
+whole path from markdown on disk to rendered DOM is covered end to end.
+
+Three tests pin behaviour that is arguably wrong rather than asserting what the
+code should ideally do — uppercase `- [X]` is not recognised as a checklist item,
+and two notes sharing a filename collapse into one graph node. They are named
+`LIMITATION` on the principle that an undocumented quirk becomes a bug the moment
+something depends on it.
